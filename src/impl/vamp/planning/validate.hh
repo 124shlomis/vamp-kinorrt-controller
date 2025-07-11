@@ -73,4 +73,23 @@ namespace vamp::planning
         auto vector = goal - start;
         return validate_vector<Robot, rake, resolution>(start, vector, vector.l2_norm(), environment);
     }
+    template <typename Robot, std::size_t rake, std::size_t resolution>
+    inline constexpr auto validate_control(
+        const typename Robot::Configuration &start,
+        const typename Robot::Control &control,
+        float duration,
+        const collision::Environment<FloatVector<rake>> &environment,
+        const typename Robot::Configuration &result) -> bool
+    {
+        // TODO: implment validation of control
+        // This is a placeholder implementation that always returns true.
+        // In a real implementation, you would check if the control leads to a valid state
+        // transition without collisions or violations of robot constraints.
+        (void)start;  // Suppress unused variable warning
+        (void)control;  // Suppress unused variable warning
+        (void)duration;  // Suppress unused variable warning
+        (void)environment;  // Suppress unused variable warning
+        (void)result;  // Suppress unused variable warning
+        return true;
+    }
 }  // namespace vamp::planning
