@@ -9,7 +9,7 @@ namespace vamp::robots
     {
         static constexpr auto name = "ackermann";
         static constexpr auto dimension = 4; // x,y,z,theta
-        static constexpr auto control_dimension = 2;
+        static constexpr auto control_dimension = 2; // v, steer
         static constexpr auto duration_dimension = 1;
         static constexpr auto resolution = 32;
         static constexpr auto n_spheres = ackermann::n_spheres;
