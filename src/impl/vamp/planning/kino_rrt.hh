@@ -42,7 +42,6 @@ namespace vamp::planning
             constexpr const std::size_t start_index = 0;
             constexpr const std::size_t goal_index = 1;
 
-            constexpr const float goal_tolerance = 0.1;
 
             auto buffer = std::unique_ptr<float>(
                 vamp::utils::vector_alloc<float, FloatVectorAlignment, FloatVectorWidth>(
@@ -150,7 +149,7 @@ namespace vamp::planning
                         auto dist = std::pow(x1 - x2, 2) +
                                     std::pow(y1 - y2, 2); // only x,y distance
 
-                        if (dist < goal_tolerance)
+                        if (dist < settings.goal_tolerance)
                         {
                             done = true;
                             break;
