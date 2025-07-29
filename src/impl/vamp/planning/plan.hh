@@ -178,6 +178,18 @@ namespace vamp::planning
         std::vector<std::size_t> size;
     };
 
+    template <std::size_t dim, std::size_t control_dim>
+    struct KinoPlanningResult
+    {
+        Path<dim> path;
+        std::vector<FloatVector<control_dim>> controls; // Controls for the path - control lead from path[i] to path[i+1], so, lower dim by 1 than path.
+        std::vector<float> durations; // Duration for for each control input
+        float cost{0.};
+        std::size_t nanoseconds{0};
+        std::size_t iterations{0};
+        std::vector<std::size_t> size;
+    };
+
     template <std::size_t dim>
     struct Roadmap
     {

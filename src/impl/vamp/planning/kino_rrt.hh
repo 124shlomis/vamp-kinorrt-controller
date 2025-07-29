@@ -24,7 +24,7 @@ namespace vamp::planning
             const Configuration &start,
             const Configuration &goal,
             const collision::Environment<FloatVector<rake>> &environment,
-            const KinoRRTSettings &settings) noexcept -> PlanningResult<dimension>
+            const KinoRRTSettings &settings) noexcept -> KinoPlanningResult<dimension, Robot::control_dimension>
         {
             return solve(start, std::vector<Configuration>{goal}, environment, settings);
         }
@@ -33,9 +33,9 @@ namespace vamp::planning
             const Configuration &start,
             const std::vector<Configuration> &goals,
             const collision::Environment<FloatVector<rake>> &environment,
-            const KinoRRTSettings &settings) noexcept -> PlanningResult<dimension>
+            const KinoRRTSettings &settings) noexcept -> KinoPlanningResult<dimension, Robot::control_dimension>
         {
-            PlanningResult<dimension> result;
+            KinoPlanningResult<dimension, Robot::control_dimension> result;
           
             NN<dimension> start_tree;
 
@@ -53,6 +53,9 @@ namespace vamp::planning
 
             std::vector<std::size_t> parents(settings.max_samples);
             std::vector<float> radii(settings.max_samples);
+            // Store control inputs and durations for each node
+            std::vector<FloatVector<Robot::control_dimension>> node_controls(settings.max_samples);
+            std::vector<float> node_durations(settings.max_samples);
 
             auto start_time = std::chrono::steady_clock::now();
 
@@ -102,7 +105,7 @@ namespace vamp::planning
 
                 bool reach = nearest_distance < settings.range;
                 
-                float duration = duration_rng.uniform_real(0.1, 1);  
+                float duration = duration_rng.uniform_real(0.1, 1);
                 auto control_input = control_rng.next();
                 Robot::scale_control(control_input);
                 //Control control_input = Control(temp_ctrl);  
@@ -123,6 +126,10 @@ namespace vamp::planning
 
                     parents[free_index] = nearest_node.index;
                     radii[free_index] = std::numeric_limits<float>::max();
+                    
+                    // Store the control input and duration used to reach this node
+                    node_controls[free_index] = control_input;
+                    node_durations[free_index] = duration;
 
                     free_index++;
 
@@ -157,12 +164,16 @@ namespace vamp::planning
                         {
                             auto parent = parents[current];
                             result.path.emplace_back(buffer_index(parent));
+                            result.controls.emplace_back(node_controls[current]);
+                            result.durations.emplace_back(node_durations[current]);
                             result.cost += result.path[result.path.size() - 1].distance(
                                 result.path[result.path.size() - 2]);
                             current = parent;
                         }
 
                         std::reverse(result.path.begin(), result.path.end());
+                        std::reverse(result.controls.begin(), result.controls.end());
+                        std::reverse(result.durations.begin(), result.durations.end());
                         break;
                     }
                 }
