@@ -131,9 +131,9 @@ namespace vamp::robots::ackermann
     {
         const float L = 0.1;
 
-        float theta = state.data[0][3];
-        float v = control_input.data[0][0];
-        float steer = control_input.data[0][1];
+        const auto theta = state.data[0][3];
+        const auto v = control_input.data[0][0];
+        const auto steer = control_input.data[0][1];
 
         dstate.data[0][0] = cos(theta) * v;
         dstate.data[0][1] = sin(theta) * v;
