@@ -103,8 +103,8 @@ namespace vamp::planning
                 auto nearest_vector = temp - nearest_configuration;
 
                 bool reach = nearest_distance < settings.range;
-                
-                float duration = duration_rng.uniform_real(0.1, 1);
+
+                float duration = duration_rng.uniform_real(settings.min_duration, settings.max_duration);
                 auto control_input = control_rng.next();
                 Robot::scale_control(control_input);
                 //Control control_input = Control(temp_ctrl);  
