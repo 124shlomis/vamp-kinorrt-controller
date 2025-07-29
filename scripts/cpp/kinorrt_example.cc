@@ -126,6 +126,10 @@ auto main(int, char **) -> int
         }
         log_data(result);
     }
+    else
+    {
+        std::cerr << "No path found." << std::endl;
+    }
 
     return 0;
 }
