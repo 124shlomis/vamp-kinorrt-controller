@@ -40,13 +40,15 @@ void log_data(const vamp::planning::KinoPlanningResult<Robot::dimension, Robot::
     //   - path.csv: Contains the robot's path (x, y, theta) for each configuration.
     //   - obstacles.csv: Contains obstacle centers and their radius.
     //   - controls.csv: Contains control inputs (velocity, steering) and their durations.
+    //   - start_and_goal.csv: Contains the start and goal configurations (x, y, z, theta).
 
     // Output configurations to CSV
     std::ofstream path_file("path.csv");
     std::ofstream obs_file("obstacles.csv");
     std::ofstream control_file("controls.csv");
+    std::ofstream start_and_goal_file("start_and_goal.csv");
 
-    if (!path_file.is_open() || !obs_file.is_open() || !control_file.is_open())
+    if (!path_file.is_open() || !obs_file.is_open() || !control_file.is_open() || !start_and_goal_file.is_open())
     {
         std::cerr << "Failed to open output CSV files." << std::endl;
         return;
@@ -73,7 +75,12 @@ void log_data(const vamp::planning::KinoPlanningResult<Robot::dimension, Robot::
         control_file << control[0] << "," << control[1] << "," << result.durations[i] << "\n";  // v, steer, duration
     }
 
-    std::cout << "Path, Control and obstacle data written to CSV.\n";
+    // Start and goal configurations
+    start_and_goal_file << std::fixed << std::setprecision(5);
+    start_and_goal_file << start[0] << "," << start[1] << "," << start[2] << "," << start[3] << "\n"; // x, y, z, theta
+    start_and_goal_file << goal[0] << "," << goal[1] << "," << goal[2] << "," << goal[3] << "\n"; // x, y, z, theta
+
+    std::cout << "data written to CSV.\n";
 }
 
 auto main(int, char **) -> int

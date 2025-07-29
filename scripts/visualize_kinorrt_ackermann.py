@@ -38,6 +38,10 @@ controls = pd.read_csv("controls.csv", header=None, names=["speed", "steering_an
 # Load obstacle data: each row is [x, y, radius]
 obstacles = pd.read_csv("obstacles.csv", header=None, names=["x", "y", "radius"])
 
+# Load start and goal configurations
+start_goal = pd.read_csv("start_and_goal.csv", header=None, names=["x", "y", "z", "theta"])
+
+
 def simulate_ackermann_segment(x0, y0, theta0, delta, v, L=0.1, dt=0.001, duration=1.0):
     """
     Simulate a single Ackermann segment given control inputs.
@@ -106,7 +110,17 @@ for _, row in obstacles.iterrows():
 # Add index numbers at each node position
 for i, (x, y) in enumerate(zip(path["x"], path["y"])):
     ax.text(x, y, str(i), fontsize=8, color='black', verticalalignment='bottom', horizontalalignment='right')
-    
+
+# Add start and goal points
+start_x, start_y, _, start_theta = start_goal.iloc[0]
+goal_x, goal_y, _, goal_theta = start_goal.iloc[1]
+ax.plot(start_x, start_y, 'go', markersize=7, label="Start")
+ax.plot(goal_x, goal_y, 'go', markersize=7, label="Goal")
+ax.text(start_x, start_y, "Start", fontsize=10, color='green', verticalalignment='bottom', horizontalalignment='right')
+ax.text(goal_x, goal_y, "Goal", fontsize=10, color='green', verticalalignment='bottom', horizontalalignment='right')
+ax.quiver(goal_x, goal_y, np.cos(goal_theta), np.sin(goal_theta),
+          scale=10, width=0.003, color='green')
+
 # Set labels, grid, legend, etc.
 ax.set_aspect('equal')  # Ensures 1:1 aspect ratio
 ax.set_xlabel("X [m]")
