@@ -4,7 +4,7 @@ namespace vamp::planning
 {
     struct KinoRRTSettings
     {
-        float range = 2.;
+        float range = 1.;
 
         bool dynamic_domain = true;
         float radius = 4.;

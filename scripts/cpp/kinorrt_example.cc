@@ -19,25 +19,12 @@ using RNG = vamp::rng::Halton<Robot::dimension>;
 using KinoRRT = vamp::planning::KinoRRT<Robot, RNG, rake, Robot::resolution>;
 
 // Start and goal configurations
-static constexpr Robot::ConfigurationArray start = {0., 0., 0.};
-static constexpr Robot::ConfigurationArray goal = {2.35, 1., 0.};
+static constexpr Robot::ConfigurationArray start = {0., 0., 0., 0.}; // x, y, z, theta
+static constexpr Robot::ConfigurationArray goal = {2.35, 1., 0., 0.};
 
 // Spheres for the cage problem - (x, y, z) center coordinates with fixed, common radius defined below
 static const std::vector<std::array<float, 3>> problem = {
-    {0.55, 0, 0.25},
-    {0.35, 0.35, 0.25},
-    {0, 0.55, 0.25},
-    {-0.55, 0, 0.25},
-    {-0.35, -0.35, 0.25},
-    {0, -0.55, 0.25},
-    {0.35, -0.35, 0.25},
-    {0.35, 0.35, 0.8},
-    {0, 0.55, 0.8},
-    {-0.35, 0.35, 0.8},
-    {-0.55, 0, 0.8},
-    {-0.35, -0.35, 0.8},
-    {0, -0.55, 0.8},
-    {0.35, -0.35, 0.8},
+    {0.55, 0., 0.}
 };
 
 // Radius for obstacle spheres
@@ -60,7 +47,6 @@ auto main(int, char **) -> int
 
     // Setup KinoRRT and plan
     vamp::planning::KinoRRTSettings kino_rrt_settings;
-    kino_rrt_settings.range = 1.0;
 
     auto result =
         KinoRRT::solve(Robot::Configuration(start), Robot::Configuration(goal), env_v, kino_rrt_settings);
