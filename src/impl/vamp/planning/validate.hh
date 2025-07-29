@@ -73,23 +73,50 @@ namespace vamp::planning
         auto vector = goal - start;
         return validate_vector<Robot, rake, resolution>(start, vector, vector.l2_norm(), environment);
     }
+
+    // Added by Yaniv
+    // New function to validate trajectory
     template <typename Robot, std::size_t rake, std::size_t resolution>
     inline constexpr auto validate_control(
         const typename Robot::Configuration &start,
-        const typename Robot::Control &control,
+        const typename Robot::Control &input,
         float duration,
         const collision::Environment<FloatVector<rake>> &environment,
-        const typename Robot::Configuration &result) -> bool
+        typename Robot::Configuration &new_configuration) -> bool
     {
-        // TODO: implment validation of control
-        // This is a placeholder implementation that always returns true.
-        // In a real implementation, you would check if the control leads to a valid state
-        // transition without collisions or violations of robot constraints.
-        (void)start;  // Suppress unused variable warning
-        (void)control;  // Suppress unused variable warning
-        (void)duration;  // Suppress unused variable warning
-        (void)environment;  // Suppress unused variable warning
-        (void)result;  // Suppress unused variable warning
-        return true;
+        // TODO: Fix use of reinterpret_cast in pack() so that this can be constexpr
+
+        const float step = duration / rake; // Shlomi S.: why?
+       // const std::size_t n = std::max(std::ceil(duration / step), 1.F); 
+
+        typename Robot::template ConfigurationBlock<rake> block;
+        new_configuration = start;
+
+        // HACK: broadcast() implicitly assumes that the rake is exactly VectorWidth
+        for (auto j = 0U; j < rake; j++)
+        {
+            Robot::fp(new_configuration, input, step);
+            //new_configuration = new_configuration + 0.001;
+            auto t = new_configuration.to_array();
+
+            for (auto i = 0U; i < Robot::dimension; ++i)
+            {
+                //block[j][i] = new_configuration[i];
+                block.data[i][j] = t[i];
+                //new_configuration.to_array(new_configuration_index);
+                //block[i][j] = new_configuration.broadcast(i); // TODO - make sure there are no redundant operations
+            }
+        }
+
+        bool valid = Robot::template fkcc<rake>(environment, block);
+        //if (not valid or n == 1)
+        //{
+        //    return valid;
+        //}
+
+        
+        return valid;
     }
+
+   
 }  // namespace vamp::planning
