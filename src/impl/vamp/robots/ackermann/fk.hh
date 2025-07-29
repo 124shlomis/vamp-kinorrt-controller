@@ -137,11 +137,6 @@ namespace vamp::robots::ackermann
 
         dstate.data[0][0] = cos(theta) * v;
         dstate.data[0][1] = sin(theta) * v;
-
-        // dstate.data[0][2] = (v / L) * tan(steer); Adir - theta is 3 or 2?? suspected bug
-
-        // ADIR - bug corrected, modifying theta instead of z
-
         dstate.data[0][2] = 0.0f;                         // (flat-ground assumption)
         dstate.data[0][3] = (v / L) * std::tan(steer);    // θ̇
 
