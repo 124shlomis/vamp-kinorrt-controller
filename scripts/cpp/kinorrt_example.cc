@@ -26,7 +26,9 @@ static constexpr Robot::ConfigurationArray goal = {2.35, 1., 0., 0.};
 
 // Spheres for the cage problem - (x, y, z) center coordinates with fixed, common radius defined below
 static const std::vector<std::array<float, 3>> problem = {
-    {0.55, 0., 0.}
+    {0.75, 0., 0.},
+    {-0.8,1.1,0},
+    {2.3,2.2,0}
 };
 
 // Radius for obstacle spheres

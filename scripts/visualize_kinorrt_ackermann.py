@@ -110,6 +110,8 @@ for _, row in obstacles.iterrows():
 # Add index numbers at each node position
 for i, (x, y) in enumerate(zip(path["x"], path["y"])):
     ax.text(x, y, str(i), fontsize=8, color='black', verticalalignment='bottom', horizontalalignment='right')
+    if i == 0:
+        ax.plot([], [], 'o', color='gray', alpha=0.5, markersize=10, label='Obstacles')
 
 # Add start and goal points
 start_x, start_y, _, start_theta = start_goal.iloc[0]
