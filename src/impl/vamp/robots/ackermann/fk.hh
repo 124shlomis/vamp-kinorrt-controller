@@ -121,7 +121,7 @@ namespace vamp::robots::ackermann
         const vamp::collision::Environment<FloatVector<rake>> &environment,
         const ConfigurationBlock<rake> &q) noexcept
     {
-        return not sphere_environment_in_collision(environment, q[0], q[1],radius, radius);
+        return not sphere_environment_in_collision(environment, q[0], q[1],q[2], radius);
     }
 
     // by Yaniv - forward propagation for a given initial configuration, control and duration
