@@ -20,3 +20,4 @@ venv/
 src/vamp/_core/*.pyi
 /.mypy_cache/
 .vscode/
+*.csv
