@@ -19,9 +19,11 @@ namespace vamp::robots::ackermann
     alignas(FloatVectorAlignment) static std::array<float, FloatVectorWidth> lows{-10, -10,0, 0};
     alignas(FloatVectorAlignment) static std::array<float, FloatVectorWidth> highs{10, 10,5, 6.283185}; // 2*pi
     static float radius = 0.2;
-
-    alignas(FloatVectorAlignment) static std::array<float, FloatVectorWidth> control_lows{0.1, -0.261799};
-    alignas(FloatVectorAlignment) static std::array<float, FloatVectorWidth> control_highs{5, 0.261799};  // 15 degrees
+    static constexpr float wheelbase = 0.1; // distance between front and rear wheels
+    static constexpr float max_road_angle = 0.261799; // 15 degrees
+    static constexpr float r_min = wheelbase / std::tan(max_road_angle); // minimum turning radius
+    alignas(FloatVectorAlignment) static std::array<float, FloatVectorWidth> control_lows{0.1, -max_road_angle};
+    alignas(FloatVectorAlignment) static std::array<float, FloatVectorWidth> control_highs{5, max_road_angle};  // 15 degrees
 
     inline void set_radius(float new_radius) noexcept
     {
@@ -68,6 +70,14 @@ namespace vamp::robots::ackermann
         Control chigh(control_highs.data());
 
         q = (q - clow) / (chigh - clow);
+    }
+
+    inline auto calculate_distance(const Configuration &a, const Configuration &b) noexcept -> float
+    {
+        // Calculate the Euclidean distance between two configurations in 2D space.
+        return std::sqrt(std::pow(a.data[0][0] - b.data[0][0], 2) +
+                         std::pow(a.data[0][1] - b.data[0][1], 2)) +
+                         std::pow((a.data[0][3] - b.data[0][3]) * r_min, 2);
     }
 
     template <std::size_t rake>
@@ -129,8 +139,6 @@ namespace vamp::robots::ackermann
     dynamics(const Configuration &state, const Control &control_input, Configuration &dstate) noexcept
         -> Configuration
     {
-        const float L = 0.1;
-
         const auto theta = state.data[0][3];
         const auto v = control_input.data[0][0];
         const auto steer = control_input.data[0][1];
@@ -138,7 +146,7 @@ namespace vamp::robots::ackermann
         dstate.data[0][0] = cos(theta) * v;
         dstate.data[0][1] = sin(theta) * v;
         dstate.data[0][2] = 0.0f;                         // (flat-ground assumption)
-        dstate.data[0][3] = (v / L) * std::tan(steer);    // θ̇
+        dstate.data[0][3] = (v / wheelbase) * std::tan(steer);    // θ̇
 
         return dstate;
     }

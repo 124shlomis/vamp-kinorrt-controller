@@ -84,7 +84,7 @@ namespace vamp::planning
                 typename Robot::ConfigurationBuffer temp_array;
                 temp.to_array(temp_array.data());
 
-                const auto nearest = tree_a->nearest(NNFloatArray<dimension>{temp_array.data()});
+                const auto nearest = tree_a->nearest(NNFloatArray<dimension>{temp_array.data()}); // TODO: nearest should take angular distace
                 if (not nearest)
                 {
                     continue;
@@ -100,9 +100,6 @@ namespace vamp::planning
 
                 const auto nearest_configuration = nearest_node.as_vector();
 
-                auto nearest_vector = temp - nearest_configuration;
-
-                bool reach = nearest_distance < settings.range;
 
                 float duration = duration_rng.uniform_real(settings.min_duration, settings.max_duration);
                 auto control_input = control_rng.next();
@@ -139,16 +136,7 @@ namespace vamp::planning
 
                     for (const auto &goal : goals)
                     {
-                        
-                        //auto dist = new_configuration.distance(goal); // angle distance is incorrect here
-                        float x1 = new_configuration.data[0][0];
-                        float y1 = new_configuration.data[0][1];
-                        float x2 = goal.data[0][0];
-                        float y2 = goal.data[0][1];
-
-                        auto dist = std::pow(x1 - x2, 2) +
-                                    std::pow(y1 - y2, 2); // only x,y distance
-
+                        auto dist = Robot::calculate_distance(new_configuration, goal);
                         if (dist < settings.goal_tolerance)
                         {
                             done = true;

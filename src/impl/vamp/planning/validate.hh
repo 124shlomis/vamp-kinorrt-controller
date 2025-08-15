@@ -86,7 +86,7 @@ namespace vamp::planning
     {
         // TODO: Fix use of reinterpret_cast in pack() so that this can be constexpr
 
-        const float step = duration / rake; // Shlomi S.: why?
+        const float step = duration / rake;
        // const std::size_t n = std::max(std::ceil(duration / step), 1.F); 
 
         typename Robot::template ConfigurationBlock<rake> block;

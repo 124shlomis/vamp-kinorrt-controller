@@ -35,6 +35,7 @@ namespace vamp::robots
 
         static constexpr auto scale_control = ackermann::scale_control;
         static constexpr auto descale_control = ackermann::descale_control;
+        static constexpr auto calculate_distance = ackermann::calculate_distance;
 
         template <std::size_t rake>
         static constexpr auto scale_configuration_block = ackermann::scale_configuration_block<rake>;
