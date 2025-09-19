@@ -139,6 +139,12 @@ if(VAMP_BUILD_CPP_DEMO)
   target_include_directories(vamp_rrtc_example SYSTEM PRIVATE ${VAMP_INCLUDES})
 endif()
 
+if(VAMP_BUILD_CPP_KINORRT_DEMO)
+  add_executable(vamp_kinorrt_example scripts/cpp/kinorrt_example.cc ${VAMP_SOURCES})
+  target_link_libraries(vamp_kinorrt_example PRIVATE Eigen3::Eigen)
+  target_include_directories(vamp_kinorrt_example SYSTEM PRIVATE ${VAMP_INCLUDES})
+endif()
+
 if(VAMP_BUILD_OMPL_DEMO)
   find_package(ompl QUIET PATHS ${VAMP_OMPL_PATH})
 
